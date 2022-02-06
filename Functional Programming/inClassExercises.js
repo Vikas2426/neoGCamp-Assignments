@@ -42,3 +42,18 @@ const logMsg = logName("Vikas");
 console.log(logMsg("hi!"));
 
 // Composition : output of 1 func is input to another func
+
+// the One
+
+const compose =
+  (...rest) =>
+  (arg) =>
+    rest.reduce((acc, func) => func(acc), arg);
+
+const increment = (num) => num + 1;
+const square = (num) => 2 * num;
+
+const incrementThenSquare = compose(increment, square);
+console.log(incrementThenSquare(5)); //12
+const squareThenIncrement = compose(square, increment);
+console.log(squareThenIncrement(5)); // 11
