@@ -288,9 +288,31 @@ live ex11: print data on success#
 challenge#
 use the fakeFetch() to get data and show on success.
 
+```js
+const getDataShowMsg = async (msg) => {
+  const msg = await fakeFetch(msg);
+  return msg;
+};
+
+getDataShowMsg("Apple"); // from server: Apple
+```
+
 live ex12: print data on success, print error on failure#
 challenge#
 Call fakeFetch(msg, true) to get a rejected promise. Handle the error with the error handler. Show a message using console.error for errors.
+
+```js
+const getDataShowMsg = async (msg) => {
+  try {
+    const response = await fakeFetch(msg, true);
+    return response;
+  } catch (err) {
+    return err;
+  }
+};
+
+getDataShowMsg("Apple"); // error from server: Apple
+```
 
 live ex13: chaining#
 challenge#
@@ -303,12 +325,35 @@ Hint: It will return in a promise.
 understanding#
 Whatever you return from .then() also becomes a promise. And this is how the chain propagates.
 
+```js
+const getServerResponseLength = async (msg) => {
+  const response = await getDataShowMsg(msg);
+  return response.length;
+};
+
+console.log(await getServerResponseLength("Apple")); // 24
+```
+
 live ex14: waterfall data#
 challenge#
 Write a function syncCallsToServer(msg1, msg2) which will take two messages and call fakeFetch() with the second message only when the first message has returned from the server.
 
 understanding#
 Think of this as a situation where you need to get userID from the server to get the order data for the user. You would need userID as part of the query to get order. How would you do that?
+
+```js
+const syncCallsToServer = async (msg1, msg2) => {
+  try {
+    const res1 = await fakeFetch(msg1);
+    const res2 = await fakeFetch(msg2);
+    return { res1, res2 };
+  } catch (err) {
+    return err;
+  }
+};
+
+console.log(await syncCallsToServer("Apple", "banana")); // { res1: 'from server: Apple', res2: 'from server: banana' }
+```
 
 async-await
 Nothing but promises which look better.
@@ -346,11 +391,43 @@ live ex16: use async-await to do waterfall#
 challenge#
 Do question number 14 with async-await this time.
 
+```js
+const syncCallsToServer = async (msg1, msg2) => {
+  try {
+    const res1 = await fakeFetch(msg1);
+    const res2 = await fakeFetch(msg2);
+    return { res1, res2 };
+  } catch (err) {
+    return err;
+  }
+};
+
+console.log(await syncCallsToServer("Apple", "banana")); // { res1: 'from server: Apple', res2: 'from server: banana' }
+```
+
 h/w convert all promise related questions to async await#
 Do this for all the exercises above.
 Take care of error handling as well.
 Read about it here https://javascript.info/async-await
 h/w important: parallel calls in async-await#
 We did the synchronous fakeFetch() fall. How would you do two parallel calls without blocking each other?
+
+```js
+const syncCallsToServer = async (msg1, msg2) => {
+  try {
+    const promise1 = fakeFetch(msg1);
+    const promise2 = fakeFetch(msg2);
+
+    const res1 = await promise1;
+    const res2 = await promise2;
+
+    return { res1, res2 };
+  } catch (err) {
+    return err;
+  }
+};
+
+console.log(await syncCallsToServer("Apple", "banana")); // { res1: 'from server: Apple', res2: 'from server: banana' }
+```
 
 How to catch different errors in async await? In promises as well.
